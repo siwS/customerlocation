@@ -8,25 +8,26 @@ package entities;
  */
 public class DistanceCalculator {
 
-    private double latitudeReference;
-    private double latitudeReferenceRadians;
+    private final int earthRadius;
 
-    private double longitudeReference;
-    private double longitudeReferenceRadians;
+    private final double latitudeRef;
+    private final double latitudeRefRads;
 
-    int earthRadius;
+    private final double longitudeRef;
+    private final double longitudeRefRads;
+
 
     /**
      * Creates a distance calculator
-     * @param latitudeReference reference point latitude
-     * @param longitudeReference reference point longtitude
+     * @param latitudeRef reference point latitude
+     * @param longitudeRef reference point longtitude
      */
-    public DistanceCalculator(double latitudeReference, double longitudeReference) {
-        this.latitudeReference = latitudeReference;
-        this.latitudeReferenceRadians = Math.toRadians(latitudeReference);
+    public DistanceCalculator(double latitudeRef, double longitudeRef) {
+        this.latitudeRef = latitudeRef;
+        this.latitudeRefRads = Math.toRadians(latitudeRef);
 
-        this.longitudeReference = longitudeReference;
-        this.longitudeReferenceRadians = Math.toRadians(longitudeReference);
+        this.longitudeRef = longitudeRef;
+        this.longitudeRefRads = Math.toRadians(longitudeRef);
         earthRadius = 6371;
     }
 
@@ -38,8 +39,8 @@ public class DistanceCalculator {
      */
     public double calculateVincentyDistance(double latitude, double longtitude) {
 
-        double dLat  = Math.toRadians((this.latitudeReference - latitude));
-        double dLong = Math.toRadians((this.longitudeReference - longtitude));
+        Double dLat = Math.toRadians(latitude-this.latitudeRef);
+        Double dLong = Math.toRadians(longtitude-this.longitudeRef);
 
         // calculate coordinates in radians
         latitude = Math.toRadians(latitude);
@@ -49,14 +50,14 @@ public class DistanceCalculator {
         double nominator = Math.pow((Math.cos(latitude) * Math.sin(dLong)),2);
 
         nominator +=
-                Math.pow((Math.cos(this.latitudeReferenceRadians) * Math.sin(latitude)
-                        - Math.sin(latitude) * Math.cos(latitude) * Math.cos(dLong)),2);
+                Math.pow((Math.cos(this.latitudeRefRads) * Math.sin(latitude)
+                        - Math.sin(latitudeRefRads) * Math.cos(latitude) * Math.cos(dLong)),2);
 
         nominator = Math.sqrt(nominator);
 
         // calculate denominator
-        double denominator = Math.sin(this.latitudeReferenceRadians) * Math.sin(latitude)
-                + Math.cos(this.latitudeReferenceRadians) * Math.cos(latitude) * Math.cos(dLong);
+        double denominator = Math.sin(this.latitudeRefRads) * Math.sin(latitude)
+                + Math.cos(this.latitudeRefRads) * Math.cos(latitude) * Math.cos(dLong);
 
         return earthRadius * Math.atan(nominator / denominator);
     }
@@ -69,14 +70,16 @@ public class DistanceCalculator {
      */
     public double calculateHaversineDistance(double latitude, double longtitude) {
 
-        double dLat  = Math.toRadians(this.latitudeReference - latitude);
-        double dLong = Math.toRadians(this.longitudeReference - longtitude);
+        Double dLat = Math.toRadians(latitude-this.latitudeRef);
+        Double dLong = Math.toRadians(longtitude-this.longitudeRef);
 
         latitude = Math.toRadians(latitude);
         longtitude = Math.toRadians(longtitude);
 
-        double a = haversin(dLat) + Math.cos(latitude) * Math.cos(longtitude) * haversin(dLong);
-        double c = 2 * Math.asin(Math.sqrt(a));
+        double a = haversin(dLat) + Math.cos(this.latitudeRefRads)
+                * Math.cos(latitude) * haversin(dLong);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         return earthRadius * c;
     }
@@ -87,6 +90,6 @@ public class DistanceCalculator {
      * @return haversin number
      */
     private static double haversin(double val) {
-        return Math.pow(Math.sin(val / 2), 2);
+        return Math.pow(Math.sin((val / (double)2)), 2);
     }
 }
