@@ -34,6 +34,7 @@ public class Solution {
         List<Customer> customerList = parseAndCalculateInviteList(customerFile, maxDistance);
 
         if (customerList != null && customerList.size() > 0) {
+            System.out.println("List of customers found within distance of " + maxDistance + " m:");
             for (Customer customer : customerList) {
                 System.out.println(customer);
             }
