@@ -4,6 +4,9 @@ package entities;
  * This class calculates the distance between a point of reference
  * and another point on GPS coordinates
  *
+ * It defines two methods to calculate distance, using the Haversine
+ * formula and the Vincenty formula
+ *
  * Created by sofia on 22/02/17.
  */
 public class DistanceCalculator {
@@ -28,7 +31,9 @@ public class DistanceCalculator {
 
         this.longitudeRef = longitudeRef;
         this.longitudeRefRads = Math.toRadians(longitudeRef);
-        earthRadius = 6371;
+
+        // Radius of earth in meters
+        earthRadius = 6371000;
     }
 
     /**
@@ -49,8 +54,7 @@ public class DistanceCalculator {
         // calculate nominator
         double nominator = Math.pow((Math.cos(latitude) * Math.sin(dLong)),2);
 
-        nominator +=
-                Math.pow((Math.cos(this.latitudeRefRads) * Math.sin(latitude)
+        nominator += Math.pow((Math.cos(this.latitudeRefRads) * Math.sin(latitude)
                         - Math.sin(latitudeRefRads) * Math.cos(latitude) * Math.cos(dLong)),2);
 
         nominator = Math.sqrt(nominator);
@@ -85,9 +89,9 @@ public class DistanceCalculator {
     }
 
     /**
-     * Calculates the haversin number
+     * Calculates the Haversin number
      * @param val number
-     * @return haversin number
+     * @return Haversin number
      */
     private static double haversin(double val) {
         return Math.pow(Math.sin((val / (double)2)), 2);
