@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.Customer;
 import entities.DistanceCalculator;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class Solution {
 
+    private final static Logger logger = Logger.getLogger(Solution.class);
 
     private static String customerFile = "src/main/resources/gistfile1.txt";
     private static String encoding = "UTF-8";
@@ -32,8 +33,13 @@ public class Solution {
 
         List<Customer> customerList = parseAndCalculateInviteList(customerFile, maxDistance);
 
-        for (Customer customer : customerList) {
-            System.out.println(customer);
+        if (customerList != null && customerList.size() > 0) {
+            for (Customer customer : customerList) {
+                System.out.println(customer);
+            }
+        }
+        else {
+            System.out.println("No customers found within distance of " + maxDistance + " m");
         }
     }
 
@@ -47,11 +53,13 @@ public class Solution {
      */
     public static List<Customer> parseAndCalculateInviteList(String inputFile, double maxDistance){
 
-        List<Customer> customerList = parseCustomersList(inputFile);
+        List<Customer> customerList = new ArrayList<>(); //parseCustomersList(inputFile);
 
         customerList = filterCustomersByDistance(customerList, maxDistance);
 
-        Collections.sort(customerList);
+        if (customerList != null) {
+            Collections.sort(customerList);
+        }
 
         return customerList;
     }
@@ -84,7 +92,8 @@ public class Solution {
             return customerList;
 
         } catch (IOException e) {
-            return null;
+            logger.info("Exception on parsing Customers list." ,e);
+            return new ArrayList<>();
         }
     }
 
@@ -95,6 +104,9 @@ public class Solution {
      * @return list of customers within max distance
      */
     private static List<Customer> filterCustomersByDistance(List<Customer> customerList, double maxDistance) {
+
+        if (customerList == null)
+            return null;
 
         List<Customer> customerListWithinMaxDistance = new ArrayList<>();
 
