@@ -53,7 +53,7 @@ public class Solution {
      */
     public static List<Customer> parseAndCalculateInviteList(String inputFile, double maxDistance){
 
-        List<Customer> customerList = new ArrayList<>(); //parseCustomersList(inputFile);
+        List<Customer> customerList = parseCustomersList(inputFile);
 
         customerList = filterCustomersByDistance(customerList, maxDistance);
 
