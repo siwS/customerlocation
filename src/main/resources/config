@@ -1,0 +1,6 @@
+# config file
+
+customer.file = src/main/resources/gistfile1.txt
+max.distance = 100000
+reference.latitude = 53.3393
+reference.longtitude = -6.25768410

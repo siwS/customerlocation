@@ -1,5 +1,6 @@
 package entities;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,53 +42,65 @@ public class DistanceCalculatorTest {
 
     @Before
     public void initCalculator(){
-        distanceCalculator = new DistanceCalculator(latitudeRef,longtitudeRef);
+        try {
+            distanceCalculator = new DistanceCalculator(latitudeRef,longtitudeRef);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void calculateVincentyDistance1() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude1,longtitude1);
         assertEquals (expectedDistance1Vincenty, distance, DELTA );
     }
 
     @Test
     public void calculateHaversineDistance1() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude1,longtitude1);
         assertEquals (expectedDistance1Haversine, distance, DELTA );
     }
 
     @Test
     public void calculateVincentyDistance2() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude2,longtitude2);
         assertEquals (expectedDistance2Vincenty, distance, DELTA );
     }
 
     @Test
     public void calculateHaversineDistance2() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude2,longtitude2);
         assertEquals (expectedDistance2Haversine, distance, DELTA );
     }
 
     @Test
     public void calculateVincentyDistance3() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude3,longtitude3);
         assertEquals (expectedDistance3Vincenty ,distance , DELTA );
     }
 
     @Test
     public void calculateHaversineDistance3() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude3,longtitude3);
         assertEquals (expectedDistance3Haversine, distance, DELTA );
     }
 
     @Test
     public void calculateVincentyDistance4() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude4,longtitude4);
         assertEquals (expectedDistance4Vincenty ,distance , DELTA );
     }
 
     @Test
     public void calculateHaversineDistance4() throws Exception {
+        Assume.assumeNotNull(distanceCalculator);
         double distance = distanceCalculator.calculateVincentyDistance(latitude4,longtitude4);
         assertEquals (expectedDistance4Haversine, distance, DELTA );
     }

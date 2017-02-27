@@ -2,6 +2,7 @@ package runtime;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import entities.Config;
 import entities.Customer;
 import entities.DistanceCalculator;
 import org.apache.log4j.Logger;
@@ -20,27 +21,26 @@ public class Solution {
 
     private final static Logger logger = Logger.getLogger(Solution.class);
 
-    private static String customerFile = "src/main/resources/gistfile1.txt";
     private static String encoding = "UTF-8";
-
-    private static double dublinOfficeLatitude = 53.3393;
-    private static double dublinOfficeLongtitude = -6.25768410;
-
-    private static double maxDistance = 100000; // distance in meters
-
 
     public static void main(String[] args){
 
-        List<Customer> customerList = parseAndCalculateInviteList(customerFile, maxDistance);
+        double referenceLat = Config.getDouble("reference.latitude" , -200);
+        double referenceLong = Config.getDouble("reference.longtitude" , -200);
+        double maxDistance = Config.getDouble("max.distance",0 );
+
+        String customerFile = Config.get("customer.file");
+
+        List<Customer> customerList = parseAndCalculateInviteList(customerFile, maxDistance, referenceLat, referenceLong);
 
         if (customerList != null && customerList.size() > 0) {
-            System.out.println("List of customers found within distance of " + maxDistance + " m:");
+            System.out.println("List of customers found within " + maxDistance + " m from coordinates (" + referenceLat + "):(" + referenceLong+")");
             for (Customer customer : customerList) {
                 System.out.println(customer);
             }
         }
         else {
-            System.out.println("No customers found within distance of " + maxDistance + " m");
+            System.out.println("No customers found within distance of " + maxDistance + " m from coordinates (" + referenceLat + "):(" + referenceLong+")");
         }
     }
 
@@ -52,11 +52,11 @@ public class Solution {
      * @param maxDistance max Distance
      * @return sorted List of Customers that are within the max distance
      */
-    public static List<Customer> parseAndCalculateInviteList(String inputFile, double maxDistance){
+    public static List<Customer> parseAndCalculateInviteList(String inputFile, double maxDistance, double referenceLat, double referenceLong){
 
         List<Customer> customerList = parseCustomersList(inputFile);
 
-        customerList = filterCustomersByDistance(customerList, maxDistance);
+        customerList = filterCustomersByDistance(customerList, maxDistance, referenceLat, referenceLong);
 
         if (customerList != null) {
             Collections.sort(customerList);
@@ -93,7 +93,7 @@ public class Solution {
             return customerList;
 
         } catch (IOException e) {
-            logger.info("Exception on parsing Customers list." ,e);
+            logger.error("Exception when parsing Customers list from file \"" + initialFile + " \"" , e);
             return new ArrayList<>();
         }
     }
@@ -104,14 +104,20 @@ public class Solution {
      * @param maxDistance max distance
      * @return list of customers within max distance
      */
-    private static List<Customer> filterCustomersByDistance(List<Customer> customerList, double maxDistance) {
+    private static List<Customer> filterCustomersByDistance(List<Customer> customerList, double maxDistance, double referenceLat, double referenceLong) {
 
         if (customerList == null)
             return null;
 
         List<Customer> customerListWithinMaxDistance = new ArrayList<>();
 
-        DistanceCalculator distanceCalculator = new DistanceCalculator(dublinOfficeLatitude,dublinOfficeLongtitude);
+        DistanceCalculator distanceCalculator;
+        try {
+            distanceCalculator = new DistanceCalculator(referenceLat, referenceLong);
+        } catch (Exception e) {
+            logger.error("Error when creating Distance Calculators for values: " + referenceLat + " and " + referenceLong, e);
+            return customerListWithinMaxDistance; // return empty list
+        }
 
         for (Customer customer : customerList) {
             double distance = distanceCalculator.calculateHaversineDistance(customer.getLatitude(),customer.getLongitude());

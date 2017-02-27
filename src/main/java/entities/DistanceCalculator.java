@@ -25,7 +25,11 @@ public class DistanceCalculator {
      * @param latitudeRef reference point latitude
      * @param longitudeRef reference point longtitude
      */
-    public DistanceCalculator(double latitudeRef, double longitudeRef) {
+    public DistanceCalculator(double latitudeRef, double longitudeRef) throws Exception {
+
+        if (latitudeRef<= -90 || latitudeRef>= 90 || longitudeRef <= -180 || longitudeRef >= 180)
+            throw new Exception("Invalid values for reference coordinates: " + latitudeRef + ", " + longitudeRef);
+
         this.latitudeRef = latitudeRef;
         this.latitudeRefRads = Math.toRadians(latitudeRef);
 

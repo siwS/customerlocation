@@ -1,5 +1,6 @@
 package runtime;
 
+import entities.Config;
 import entities.Customer;
 import org.junit.Test;
 
@@ -12,17 +13,20 @@ import java.util.List;
  */
 public class SolutionTest {
 
-    private static String customerFile1 = "src/main/resources/testCustomerLocations1";
-    private static String customerFile2 = "src/main/resources/testCustomerLocations2";
+    private static String customerFile1 = "src/test/resources/testCustomerLocations1";
+    private static String customerFile2 = "src/test/resources/testCustomerLocations2";
 
-    private static String expectedCustomers1 = "src/main/resources/testExpectedCustomers1";
-    private static String expectedCustomers2 = "src/main/resources/testExpectedCustomers2";
+    private static String expectedCustomers1 = "src/test/resources/testExpectedCustomers1";
+    private static String expectedCustomers2 = "src/test/resources/testExpectedCustomers2";
 
     private static double maxDistance = 10000000;
 
     @Test
     public void parseAndCalculateInviteList1() throws Exception {
-        List<Customer> customerList = Solution.parseAndCalculateInviteList(customerFile1, maxDistance);
+        double referenceLat = 53.3393;
+        double referenceLong = -6.25768410;
+
+        List<Customer> customerList = Solution.parseAndCalculateInviteList(customerFile1, maxDistance, referenceLat, referenceLong);
         List<Customer> expectedCustomerList = buildExpectedCustomerList1();
 
         if (!customerList.equals(expectedCustomerList))
@@ -31,7 +35,10 @@ public class SolutionTest {
 
     @Test
     public void parseAndCalculateInviteList2() throws Exception {
-        List<Customer> customerList = Solution.parseAndCalculateInviteList(customerFile2, maxDistance);
+        double referenceLat = 53.3393;
+        double referenceLong = -6.25768410;
+
+        List<Customer> customerList = Solution.parseAndCalculateInviteList(customerFile2, maxDistance, referenceLat, referenceLong);
         List<Customer> expectedCustomerList = buildExpectedCustomerList2();
 
         if (!customerList.equals(expectedCustomerList))
